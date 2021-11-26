@@ -2,10 +2,20 @@ from bs4 import BeautifulSoup
 import requests
 import csv
 
-website = 'https://www.tiket.com/hotel/search?room=1&adult=1&page=1&id=surabaya-108001534490276270&type=CITY&q=Surabaya&checkin=2021-11-25&checkout=2021-11-26'
-response = requests.get(website)
-scrapping = BeautifulSoup(response.text, 'html.parser')
-items = scrapping.findAll('div', 'card-frame')
+datas = []
+dokumen = "https://www.kaskus.co.id/"
+data = requests.get(dokumen)
+html_soup = BeautifulSoup(data.text, 'html.parser')
+items = html_soup.findAll('div', 'P(15px) Bd(borderSolidLightGrey) Mb(15px) Bgc(c-white) Pos(r) Ov(h) jsThreadCard')
 for it in items:
-    name = it.find('h3', 'title ellipsis')
-    print(name)
+    judul = it.find('a', class_='C(c-primary)').text
+    genre = it.find('a', class_='C(c-tertiary) Fz(12px)').text
+
+    datas.append([judul, genre])
+
+header = ['Judul', 'Genre']
+convert = csv.writer(open('data/data.csv', 'w', newline=''))
+convert.writerow(header)
+
+for d in datas:
+    convert.writerow(d)
